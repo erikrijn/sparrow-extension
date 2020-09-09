@@ -14,13 +14,10 @@ import log from 'loglevel'
 import pify from 'pify'
 import Web3 from 'web3'
 import SINGLE_CALL_BALANCES_ABI from 'single-call-balance-checker-abi'
-import { MAINNET_NETWORK_ID, RINKEBY_NETWORK_ID, ROPSTEN_NETWORK_ID, KOVAN_NETWORK_ID } from '../controllers/network/enums'
+import { MAINNET_NETWORK_ID } from '../controllers/network/enums'
 
 import {
   SINGLE_CALL_BALANCES_ADDRESS,
-  SINGLE_CALL_BALANCES_ADDRESS_RINKEBY,
-  SINGLE_CALL_BALANCES_ADDRESS_ROPSTEN,
-  SINGLE_CALL_BALANCES_ADDRESS_KOVAN,
 } from '../controllers/network/contract-addresses'
 import { bnToHex } from './util'
 
@@ -203,18 +200,6 @@ export default class AccountTracker {
         await this._updateAccountsViaBalanceChecker(addresses, SINGLE_CALL_BALANCES_ADDRESS)
         break
 
-      case RINKEBY_NETWORK_ID.toString():
-        await this._updateAccountsViaBalanceChecker(addresses, SINGLE_CALL_BALANCES_ADDRESS_RINKEBY)
-        break
-
-      case ROPSTEN_NETWORK_ID.toString():
-        await this._updateAccountsViaBalanceChecker(addresses, SINGLE_CALL_BALANCES_ADDRESS_ROPSTEN)
-        break
-
-      case KOVAN_NETWORK_ID.toString():
-        await this._updateAccountsViaBalanceChecker(addresses, SINGLE_CALL_BALANCES_ADDRESS_KOVAN)
-        break
-
       default:
         await Promise.all(addresses.map(this._updateAccount.bind(this)))
     }
@@ -255,7 +240,7 @@ export default class AccountTracker {
 
     ethContract.balances(addresses, ethBalance, (error, result) => {
       if (error) {
-        log.warn(`MetaMask - Account Tracker single call balance fetch failed`, error)
+        log.warn(`Sparrow - Account Tracker single call balance fetch failed`, error)
         Promise.all(addresses.map(this._updateAccount.bind(this)))
         return
       }
